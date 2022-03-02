@@ -1,0 +1,14 @@
+export const APP_BACKGROUND_WHITE = '#ffffffff'; // white
+export const APP_TEXT_WHITE = '#ffffffff'; // white
+export const APP_BACKGROUND_CREAM_COLOR = '#f3f2f2'; 
+export const APP_BUTTON_BACKGROUND = '#37b245'; // green
+export const APP_TEXT_COLOR = '#37b245'; // green
+export const DRAWER_BACKGROUND = '#565654';
+export const APP_GRAY_BACKGROUND = '#e8e8e8'; // gray
+export const APP_GRAY_TEXT = '#c8c8c8';
+export const APP_BLACK = 'black';
+export const LIGHT_GREEN = '#96D7A4';
+export const DARK_GRAY = '#838383';
+export const ROW_EVEN_COLOR = '#d9f2e6';
+export const ROW_ODD_COLOR = '#b3e6cc';
+export const HEADER_COLOR = '#79d2a6';
