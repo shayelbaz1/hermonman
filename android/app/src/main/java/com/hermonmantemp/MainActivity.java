@@ -1,4 +1,4 @@
-package com.hermonmantemp;
+package com.hermonman;
 
 import com.facebook.react.ReactActivity;
 
