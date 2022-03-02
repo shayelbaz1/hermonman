@@ -15,6 +15,7 @@ export default class RedirectByUserStatus extends Component {
 
 	componentDidMount() {
 		firebase.subscribeToTopic('app');
+        console.log("\x1b[33m ~ file: Splash.js ~ line 18 ~ componentDidMount ~ firebase", firebase)
 
 		console.log('sceneManager RedirectByUserStatus::::::::::');
 		// firebase
