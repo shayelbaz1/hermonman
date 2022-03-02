@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>69955617973-95f3t6oblhdkuil83i40n4pl4l50o5dc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.69955617973-95f3t6oblhdkuil83i40n4pl4l50o5dc</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB1X75OFSNmhk1iBKwKy8z4N88VMxiUUa0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>69955617973</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.hermonman</string>
+	<key>PROJECT_ID</key>
+	<string>hermonman-29eea</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hermonman-29eea.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:69955617973:ios:1e373f951aa204de9beafc</string>
+	<key>DATABASE_URL</key>
+	<string>https://hermonman-29eea.firebaseio.com</string>
+</dict>
+</plist>
