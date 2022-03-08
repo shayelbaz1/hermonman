@@ -1,6 +1,5 @@
 import {AsyncStorage} from 'react-native';
 import {KEYS} from './localStorageModels';
-import firebase from '../firebase/Firebase';
 
 class localStorage {
 

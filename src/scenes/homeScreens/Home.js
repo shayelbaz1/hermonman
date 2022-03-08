@@ -1,7 +1,7 @@
 import moment from 'moment';
-import {Content} from 'native-base';
-import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import { Content } from 'native-base';
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
 import {
 	APP_BACKGROUND_CREAM_COLOR,
 	APP_BACKGROUND_WHITE,
@@ -9,21 +9,25 @@ import {
 	APP_TEXT_COLOR,
 } from '../../assets/colors';
 import HermonManButton from '../../components/common/hermonManButton/HermonManButton';
-import {CALORIES, CALORIES_MATINATIN} from '../../utils/data/DietTypes';
+import { CALORIES, CALORIES_MATINATIN } from '../../utils/data/DietTypes';
 import firebase from '../../utils/firebase/Firebase';
-import {getStartDirection, strings} from '../../utils/lang/I18n';
+import { getStartMethods } from '../../utils/firebase/firebaseActions';
+import { getStartDirection, strings } from '../../utils/lang/I18n';
 import Language from '../../utils/lang/Language';
 import Purchase from '../purchase/Purchase';
 import sceneManager from '../sceneManager';
 import FreeDietsStart from '../startMethods/commonScreens/FreeDietsStart';
+import auth from '@react-native-firebase/auth'
 
 export default class Home extends Component {
-	constructor() {
+	constructor(props) {
+		console.log("\x1b[33m ~ file: Home.js ~ line 23 ~ constructor ~ props", props.route)
+		console.log('c-tor home');
 		super();
 		this.state = {
 			startMethods: [],
 			startMethodsMaintain: [],
-			user: {},
+			user: props.route?.params?.user,
 			userLoaded: false,
 			isPurchaseEnabled: false,
 		};
@@ -32,46 +36,52 @@ export default class Home extends Component {
 		// this.onRegistrationPress = this.onRegistrationPress.bind(this);
 		// BackHandler.addEventListener('hardwareBackPress', this.onBackPressed);
 		this.methodManager = this.methodManager.bind(this);
+
 	}
 
 	componentWillMount() {
-		let user = this.props.user;
-		firebase
-			.getCurrentUser()
-			.then((user) => {
-				this.setState({user, userLoaded: true});
-				// this.setState({user: user}, () => console.log('The object and language user::::', this.state.user));
-				console.log(this.state, user);
-				firebase.getStartMethods().then((startMethods) => {
-					this.startMethods = startMethods;
-					const newArr = [];
-					for (let i = 0; i < this.startMethods.length; i++) {
-						var method = Language.getDataByLanguage(this.startMethods[i], user.language);
-						newArr.push(method);
-					}
-					console.log('the new arr is :', newArr);
-					this.setState({startMethods: newArr});
-				});
 
-				firebase.getStartMethodsMaintain().then((startMethodsMaintain) => {
-					this.startMethodsMaintain = startMethodsMaintain;
-					const newArr2 = [];
-					for (let i = 0; i < this.startMethodsMaintain.length; i++) {
-						var method = Language.getDataByLanguage(this.startMethodsMaintain[i], user.language);
-						newArr2.push(method);
-					}
-					console.log('the new arr is :', newArr2);
-					this.setState({startMethodsMaintain: newArr2});
-				});
-			})
-			.catch((err) => {
-				console.log('There was an error getting current user in home page: ', err);
-			});
+		// firebase
+		// 	.getCurrentUser()
+		// 	.then((user) => {
+		console.log("\x1b[33m ~ file: Home.js ~ line 43 ~ .then ~ user", this.state.user)
+		this.setState({ userLoaded: true });
+		// this.setState({user: user}, () => console.log('The object arnd language user::::', this.state.user));
+		console.log("\x1b[33m ~ file: Home.js ~ line 50 ~ //.then ~ this.state", this.state)
+		getStartMethods()
+		// getStartMethods().then((startMethods) => {
+		// 	console.log("\x1b[33m ~ file: Home.js ~ line 51 ~ firebase.getStartMethods ~ startMethods", startMethods)
+		// 	this.startMethods = startMethods;
+		// 	const newArr = [];
+		// 	for (let i = 0; i < this.startMethods.length; i++) {
+		// 		var method = Language.getDataByLanguage(this.startMethods[i], this.state.user.language);
+		// 		newArr.push(method);
+		// 	}
+		// 	console.log('the new arr is :', newArr);
+		// 	this.setState({ startMethods: newArr });
+		// });
+
+		firebase.getStartMethodsMaintain().then((startMethodsMaintain) => {
+			console.log("\x1b[33m ~ file: Home.js ~ line 63 ~ firebase.getStartMethodsMaintain ~ startMethodsMaintain", startMethodsMaintain)
+			this.startMethodsMaintain = startMethodsMaintain;
+			const newArr2 = [];
+			for (let i = 0; i < this.startMethodsMaintain.length; i++) {
+				var method = Language.getDataByLanguage(this.startMethodsMaintain[i], this.state.user.language);
+				newArr2.push(method);
+			}
+			console.log('the new arr is :', newArr2);
+			this.setState({ startMethodsMaintain: newArr2 });
+		});
+		// })
+		// .catch((err) => {
+		// 	console.log('There was an error getting current user in home page: ', err);
+		// });
 	}
 
 	componentDidMount() {
+
 		firebase.checkPurchaseEnabled().then((isPurchaseEnabled) => {
-			this.setState({isPurchaseEnabled});
+			this.setState({ isPurchaseEnabled });
 		});
 	}
 
@@ -93,7 +103,7 @@ export default class Home extends Component {
 			<View key={index}>
 				<HermonManButton
 					onPress={() => this.methodManager(singleMethod)}
-					textStyle={{fontWeight: 'bold', fontSize: 20}}
+					textStyle={{ fontWeight: 'bold', fontSize: 20 }}
 					text={singleMethod}
 					buttonStyle={{
 						height: 60,
@@ -114,7 +124,7 @@ export default class Home extends Component {
 			<View key={index}>
 				<HermonManButton
 					onPress={() => this.methodManager(singleMethod)}
-					textStyle={{fontWeight: 'bold', fontSize: 20, textAlign: 'center'}}
+					textStyle={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}
 					text={singleMethod}
 					textColor={APP_TEXT_COLOR}
 					backgroundColor={APP_BACKGROUND_WHITE}
@@ -195,11 +205,12 @@ export default class Home extends Component {
 	//for new user,will return 3 diets
 	//for user that purchased - will return all diets
 	renderMethodByUser = () => {
-		const {user} = this.state;
-		console.log('state: ', this.state);
+		const { user } = this.state;
+		console.log("\x1b[33m ~ file: Home.js ~ line 204 ~ this.state", this.state)
+		console.log("\x1b[33m ~ file: Home.js ~ line 203 ~ user", user)
 
-		if (user._id) {
-			const {registerDate, expireDate} = user;
+		if (user) {
+			const { registerDate, expireDate } = user;
 			const registerDateConverted = registerDate ? this.convertDateStringToDate(registerDate) : undefined;
 			const expireDateConverted = expireDate ? this.convertDateStringToDate(expireDate) : undefined;
 			const freeSubscriptionUntil = registerDate ? moment(registerDateConverted).add(7, 'days') : undefined;
@@ -241,17 +252,19 @@ export default class Home extends Component {
 		const dietMethodMaintain = strings('DIET_MANTAIN_METHODS');
 		console.log('The object and language getStartDirection::::', getStartDirection());
 		return (
-			<View style={{paddingTop: 20}}>
+			<View style={{ paddingTop: 20 }}>
 				<Text style={styles.titleStyle}>{dietMethod + ':'}</Text>
-				{this.renderMethods()}
+				{/* {this.renderMethods()} */}
 				<Text style={styles.titleStyle}>{dietMethodMaintain + ':'}</Text>
-				{this.renderMethodsMaintain()}
+				{/* {this.renderMethodsMaintain()} */}
 			</View>
 		);
 	};
 
 	render() {
-		return <Content style={{backgroundColor: APP_BACKGROUND_CREAM_COLOR}}>{this.renderMethodByUser()}</Content>;
+		return <>{this.renderMethodByUser()}</>
+		// return (
+		// <Content style={{backgroundColor: APP_BACKGROUND_CREAM_COLOR}}>{this.renderMethodByUser()}</Content>);
 	}
 }
 

@@ -12,6 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.facebook.react.bridge.JSIModulePackage; // react-native-reanimated
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // react-native-reanimated
+// import io.invertase.firebase.RNFirebasePackage; //react-native-firebase
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -20,13 +22,21 @@ public class MainApplication extends Application implements ReactApplication {
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
         }
-
+        
+        // @Override
+        // protected List<ReactPackage> getPackages() {
+        //   return Arrays.<ReactPackage>asList(
+        //       new MainReactPackage(),
+        //       new RNFirebasePackage(), <----- this
+        //   );
+        // }
         @Override
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          // packages.add(new RNFirebasePackage());
           return packages;
         }
 
@@ -50,10 +60,12 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
   }
 
   /**
-   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+   * Loads Flipper in React Native templates. Call this in the onCreate method
+   * with something like
    * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
    *
    * @param context
@@ -64,9 +76,9 @@ public class MainApplication extends Application implements ReactApplication {
     if (BuildConfig.DEBUG) {
       try {
         /*
-         We use reflection here to pick up the class that initializes Flipper,
-        since Flipper library is not available in release mode
-        */
+         * We use reflection here to pick up the class that initializes Flipper,
+         * since Flipper library is not available in release mode
+         */
         Class<?> aClass = Class.forName("com.hermonman.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)

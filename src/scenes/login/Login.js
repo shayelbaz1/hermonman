@@ -10,7 +10,11 @@ import {getStartDirection, initLocale, strings} from '../../utils/lang/I18n';
 import localStorage from '../../utils/localStorage/localStorage';
 import sceneManager from '../sceneManager';
 import moment from 'moment/moment';
-
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import {
+	USER
+} from '../../utils/firebase/firebaseModels';
 const hermonmanLogo = getImage('hermonmanLogo');
 
 const black = 'black';
@@ -26,13 +30,13 @@ export default class Login extends Component {
 			lanaugeModalOpen: false,
 
 			email: '',
-			password: '',
+			password: 'Aa123456',
 			enabled: true,
 		};
 		console.log('state now is: ', this.state);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		localStorage.getCurrentUserMail().then((email) => {
 			this.setState({email});
 		});
@@ -54,7 +58,7 @@ export default class Login extends Component {
 	};
 
 	renderLoginButton = () => {
-		const loginText = strings('LOGIN!');
+		const loginText = strings('LOGIN');
 
 		if (this.state.enabled) {
 			return (
@@ -88,31 +92,76 @@ export default class Login extends Component {
 		this.setState({enabled: false});
 		console.log('state now is: ', this.state);
 		const {email, password} = this.state;
+        console.log("\x1b[33m ~ file: Login.js ~ line 95 ~ email, password", email, password)
 		localStorage.setCurrentUserMail(email);
-		firebase
-			.signInHermonManUser(email, password)
-			.then((user) => {
-				if (user) {
-					const {expireDate} = user;
-					const expireDateConverted = expireDate ? this.convertDateStringToDate(expireDate) : undefined;
-					const today = moment(new Date());
-					console.log('signed in with firebase.signInHermonManUser, going to home screen', user);
-					Keyboard.dismiss();
-					if (user.status === '0' || expireDateConverted.isBefore(today)) {
-						sceneManager.goToPurchase(user);
-					} else if (user.status === '1') {
-						sceneManager.goToHome(user);
-					} else {
-						sceneManager.goToProgress(user);
-					}
-				}
-			})
-			.catch((error) => {
-				this.setState({enabled: true});
-				console.log('error in firebase.signInHermonManUser', error);
-				this.showError();
-			});
+		firebase.signInHermonManUser('sguides28@gmail.com', 'Aa123456').then(()=>{
+			console.log('success login');
+		})
+		// firebase.signInHermonManUser(email, password).then(()=>{})
+			// .then((user) => {
+            //     console.log("\x1b[33m ~ file: Login.js ~ line 95 ~ .then ~ user", user)
+			// 	if (user) {
+			// 		const {expireDate} = user;
+			// 		const expireDateConverted = expireDate ? this.convertDateStringToDate(expireDate) : undefined;
+			// 		const today = moment(new Date());
+			// 		console.log('signed in with firebase.signInHermonManUser, going to home screen', user);
+			// 		Keyboard.dismiss();
+			// 		if (user.status === '0' || expireDateConverted.isBefore(today)) {
+			// 			sceneManager.goToPurchase(user);
+			// 		} else if (user.status === '1') {
+			// 			// sceneManager.goToHome(user);
+            //             console.log("\x1b[33m ~ file: Login.js ~ line 107 ~ .then ~ Home")
+			// 			this.props.navigation.navigate('Home',{user})
+			// 		} else {
+			// 			sceneManager.goToProgress(user);
+			// 		}
+			// 	}
+			// })
+			// .catch((error) => {
+			// 	this.setState({enabled: true});
+			// 	console.log('error in firebase.signInHermonManUser', error);
+			// 	this.showError();
+			// });
 	};
+
+	componentDidMount(){
+		// const subscriber = auth().onAuthStateChanged(this.onAuthStateChanged);
+	}
+	// Handle user state changes
+	//  onAuthStateChanged=(user) =>{
+    //     console.log("\x1b[33m ~ file: App.js ~ line 57 ~ onAuthStateChanged ~ user", user)
+	// 		const firebaseUser = user._user
+	// 		const userId = firebaseUser.uid || firebaseUser.user.uid;
+	// 		console.log('firebaseuser USER ID!!!!!!:   ', userId);
+	// 		let currentUser;
+	// 		database().ref(`${USER.REF}/${userId}`).on('value', snapshot => {
+	// 			const userRef = snapshot.val()
+	// 			console.log("\x1b[33m ~ file: Firebase.js ~ line 346 ~ database ~ userRef", userRef)
+	// 			currentUser= userRef
+	// 			console.log("\x1b[33m ~ file: Login.js ~ line 133 ~ currentUser", currentUser)
+			
+	// 					const {expireDate} = currentUser;
+	// 					console.log("\x1b[33m ~ file: Login.js ~ line 135 ~ expireDate", expireDate)
+	// 					const expireDateConverted = expireDate ? this.convertDateStringToDate(expireDate) : undefined;
+	// 					const today = moment(new Date());
+	// 					console.log('signed in with firebase.signInHermonManUser, going to home screen', currentUser);
+	// 					Keyboard.dismiss();
+	// 					if (currentUser.status === '0' || expireDateConverted.isBefore(today)) {
+	// 						sceneManager.goToPurchase(currentUser);
+	// 					} else if (currentUser.status === '1') {
+	// 						// sceneManager.goToHome(currentUser);
+	// 						console.log("\x1b[33m ~ file: Login.js ~ line 107 ~ .then ~ Home")
+	// 						this.props.navigation.navigate('Home',{user:currentUser})
+	// 					} else {
+	// 						sceneManager.goToProgress(currentUser);
+	// 					}
+	
+		
+	// 		if (initializing) setInitializing(false);
+	// 		});
+	// }
+
+	
 
 	convertDateStringToDate = (dateString) => {
 		const parts = dateString.split('/');
@@ -122,11 +171,14 @@ export default class Login extends Component {
 	};
 
 	onForgotPasswordPress = () => {
-		sceneManager.goToForgotPassword();
+		// sceneManager.goToForgotPassword(this.props.navigation);
+		this.props.navigation.navigate('ForgotPassword')
 	};
 
 	onRegistrationPress = () => {
-		sceneManager.goToRegistration();
+    console.log("\x1b[33m ~ file: Login.js ~ line 129 ~ onRegistrationPress")
+		// sceneManager.goToRegisterScreen();
+		this.props.navigation.navigate('RegisterScreen')
 	};
 
 	async changeLocale(selectedLanguage) {
@@ -237,6 +289,7 @@ export default class Login extends Component {
 							type={types.password}
 							onChangeText={(text) => this.setState({password: text})}
 							placeholder={typePlaceholder}
+							textValue={"Aa123456"}
 						/>
 					</View>
 					<View style={{marginBottom: 20}}>

@@ -38,11 +38,11 @@ export default class RegisterScreen extends Component {
 	constructor() {
 		super();
 		this.state = {
-			email: '',
-			pass1: '',
-			pass2: '',
-			firstName: '',
-			lastName: '',
+			email: 'test1@gmail.com',
+			pass1: 'Aa123456',
+			pass2: 'Aa123456',
+			firstName: 'Shay',
+			lastName: 'Elbaz',
 			birthDate: '',
 			isGenderModalOpen: false,
 			isLanguageModalOpen: false,
@@ -51,16 +51,16 @@ export default class RegisterScreen extends Component {
 				registerActionContainerStyle: {},
 			},
 			validation: false,
-			gender: '',
+			gender: 'Male',
 			languageKey: '',
 			language: '',
 			selectedLanguage: '',
 			languageName: '',
-			height: '',
-			weight: '',
+			height: '185',
+			weight: '80',
 		};
 
-		//        this.onRegisterPress = this.onRegisterPress.bind(this);
+		       this.onRegisterPress = this.onRegisterPress.bind(this);
 	}
 
 	renderGenderModal = () => (
@@ -99,7 +99,7 @@ export default class RegisterScreen extends Component {
 		return (
 			<TouchableOpacity onPress={this.openGenderModal} style={[styles.textBox]}>
 				<View style={[flexDirection, {justifyContent: 'space-between'}]}>
-					<Icon name={'ios-arrow-down'} style={{fontSize: 20, margin: '4%'}} />
+					{/* <Icon name={'ios-arrow-down'} style={{fontSize: 20, margin: '4%'}} /> */}
 					<Text style={[styles.textStyleForModal]}>{text}</Text>
 				</View>
 			</TouchableOpacity>
@@ -170,7 +170,7 @@ export default class RegisterScreen extends Component {
 		return (
 			<TouchableOpacity onPress={this.openLanguageModal} style={[styles.textBox]}>
 				<View style={[flexDirection, {justifyContent: 'space-between'}]}>
-					<Icon name={'ios-arrow-down'} style={{fontSize: 20, margin: '4%'}} />
+					{/* <Icon name={'ios-arrow-down'} style={{fontSize: 20, margin: '4%'}} /> */}
 					<Text style={[styles.textStyleForModal]}>{text}</Text>
 				</View>
 			</TouchableOpacity>
@@ -314,6 +314,7 @@ export default class RegisterScreen extends Component {
 							labelStyle={[styles.labelStyle, labelDirection, marginByPlatform]}
 							viewInputStyle={styles.textBox}
 							onChangeText={(text) => this.setState({firstName: text})}
+							textValue={this.state.firstName}
 						/>
 
 						<HermonManTextInput
@@ -324,6 +325,8 @@ export default class RegisterScreen extends Component {
 							labelTitle={lastNameLabel}
 							required
 							onChangeText={(text) => this.setState({lastName: text})}
+							textValue={this.state.lastName}
+
 						/>
 
 						{/* password */}
@@ -336,6 +339,8 @@ export default class RegisterScreen extends Component {
 							labelTitle={passwordLabel}
 							required
 							onChangeText={(text) => this.setState({pass1: text})}
+							textValue={this.state.pass1}
+
 						/>
 
 						<HermonManTextInput
@@ -347,6 +352,8 @@ export default class RegisterScreen extends Component {
 							required
 							labelTitle={repeatPasswordLabel}
 							onChangeText={(text) => this.setState({pass2: text})}
+							textValue={this.state.pass2}
+
 						/>
 
 						{/* email */}
@@ -359,6 +366,7 @@ export default class RegisterScreen extends Component {
 							labelTitle={emailLabel}
 							required
 							onChangeText={this.trimMail}
+							textValue={this.state.email}
 						/>
 
 						{/* weight */}
@@ -371,6 +379,8 @@ export default class RegisterScreen extends Component {
 							labelTitle={weightLabel}
 							required
 							onChangeText={(text) => this.setState({weight: text})}
+							textValue={this.state.weight}
+
 						/>
 
 						{/* height */}
@@ -383,6 +393,8 @@ export default class RegisterScreen extends Component {
 							labelTitle={heightLabel}
 							required
 							onChangeText={(text) => this.setState({height: text})}
+							textValue={this.state.height}
+
 						/>
 
 						{/* birthday */}

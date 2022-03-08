@@ -1,9 +1,9 @@
 {
+    "appId": "1:69955617973:ios:1e373f951aa204de9beafc",
     "apiKey": "AIzaSyCiF9Sg_Y0m5bg-KILGeqvEZF4Ksa1_8Cs",
-    "authDomain": "hermonman-29eea.firebaseapp.com",
     "databaseURL": "https://hermonman-29eea.firebaseio.com",
-    "projectId": "hermonman-29eea",
     "storageBucket": "hermonman-29eea.appspot.com",
+    "authDomain": "hermonman-29eea.firebaseapp.com",
     "messagingSenderId": "69955617973",
-    "appId": "1:69955617973:ios:1e373f951aa204de9beafc"
+    "projectId": "hermonman-29eea"
  }

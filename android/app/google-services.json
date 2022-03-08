@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:69955617973:android:93946d573546790a",
+        "mobilesdk_app_id": "1:69955617973:android:04e53d40a76c6dd69beafc",
         "android_client_info": {
           "package_name": "com.hermonman"
         }
@@ -30,6 +30,49 @@
             {
               "client_id": "69955617973-18e26jd0srhnr0dd2ap2lkgg1419gi2v.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "69955617973-95f3t6oblhdkuil83i40n4pl4l50o5dc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hermonman"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69955617973:android:93946d573546790a",
+        "android_client_info": {
+          "package_name": "com.lstechs.hermonman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69955617973-18e26jd0srhnr0dd2ap2lkgg1419gi2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-VlW-PuGX_-Q-PbkCe00QGkMAqZO7AlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69955617973-18e26jd0srhnr0dd2ap2lkgg1419gi2v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69955617973-95f3t6oblhdkuil83i40n4pl4l50o5dc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hermonman"
+              }
             }
           ]
         }

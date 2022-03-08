@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'native-base';
-import { DatePickerDialog } from 'react-native-datepicker-dialog'
+import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { APP_GRAY_TEXT } from '../../assets/colors';
 
@@ -11,9 +11,12 @@ export default class DateInput extends Component {
         super(props);
 
         const { onDatePicked, placeholder } = this.props;
+
         this.state = {
             color: notChosenColor,
             dateText: placeholder,
+            date: new Date(),
+            isOpenDatePicker: false
         };
 
         if (onDatePicked) {
@@ -43,7 +46,17 @@ export default class DateInput extends Component {
                     <Icon name={this.props.imageSource} style={{ fontSize: 25, color: APP_GRAY_TEXT, margin: '4%' }} />
                     <Text style={[styles.textInput, this.props.textInput, { color: this.state.color }]}>{this.state.dateText}</Text>
                 </TouchableOpacity>
-                <DatePickerDialog ref='dpDialog' onDatePicked={this.onDatePicked} />
+                <DatePicker 
+                modal 
+                open={this.state.isOpenDatePicker} 
+                date={this.state.date}
+mode="date"
+                // ref='dpDialog' 
+                onConfirm={this.onDatePicked}
+                onCancel={() => {
+                    this.setState({ isOpenDatePicker: false });
+                  }}
+                />
             </View>
         )
     }
@@ -54,7 +67,16 @@ export default class DateInput extends Component {
                 <TouchableOpacity onPress={this.onDatePickerPress}>
                     <Text style={[styles.textInput, this.props.textInput, { color: this.state.color }]}>{this.state.dateText}</Text>
                 </TouchableOpacity>
-                <DatePickerDialog ref='dpDialog' onDatePicked={this.onDatePicked} />
+                <DatePicker modal 
+                open={this.state.isOpenDatePicker} 
+                date={this.state.date}
+                mode="date"
+
+                // ref='dpDialog' 
+                onConfirm={this.onDatePicked}
+                onCancel={() => {
+                    this.setState({ isOpenDatePicker: false });
+                  }} />
             </View>
         )
     }
@@ -68,15 +90,17 @@ export default class DateInput extends Component {
     }
 
     onDatePickerPress() {
+        
         let dateToOpen = new Date();
         if (this.props.openDateForRegistration) {
             const currentDate = new Date();
             const year = currentDate.getFullYear() - 30;
             dateToOpen = new Date(year, 0, 1);
         }
-        this.refs.dpDialog.open({
-            date: dateToOpen
-        });
+        this.setState({ isOpenDatePicker: true , date:dateToOpen });
+        // this.refs.dpDialog.open({
+        //     date: dateToOpen
+        // });
 
     };
 
@@ -84,7 +108,9 @@ export default class DateInput extends Component {
         const dateFormat = 'DD/MM/YYYY';
         this.setState({
             dateText: moment(date).format(dateFormat),
-            color: chosenColor
+            color: chosenColor,
+            isOpenDatePicker:false,
+            date
         });
         if (this.state.onDatePickedCallback) {
             this.state.onDatePickedCallback(date);

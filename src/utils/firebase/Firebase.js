@@ -1,4 +1,4 @@
-//import firebase from 'firebase'
+// import firebase from 'firebase'
 // import * as firebase from 'firebase';
 
 // import '@firebase/messaging';
@@ -20,7 +20,11 @@ import {
 } from './firebaseModels';
 import localStorage from '../localStorage/localStorage';
 import moment from 'moment';
-// import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+
+console.log("\x1b[33m ~ file: Firebase.js ~ line 25 ~ auth", auth)
 
 class Firebase {
 	static instance = null;
@@ -39,32 +43,40 @@ class Firebase {
 	}
 
 	init() {
+		console.log("\x1b[33m ~ file: Firebase.js ~ line 24 ~ firebase", firebase)
+		
+		// this._firebaseApp = initializeApp(config);
+        // console.log("\x1b[33m ~ file: Firebase.js ~ line 48 ~ init ~ this._firebaseApp", this._firebaseApp)
 		// this._firebaseApp = firebase.initializeApp(config);
-		// this.messaging = this._firebaseApp.messaging();
+        // console.log("\x1b[33m ~ file: Firebase.js ~ line 45 ~ init ~ this._firebaseApp", this._firebaseApp)
+		// this.messaging = messaging();
 	}
 
 	// Get current user
 
 	getCurrentUser() {
-		// return this.onAuthStateChangedPromise()
-		// 	.then((user) => {
-		// 		return this.getUserById(user.uid);
-		// 	})
-		// 	.catch((error) => {
-		// 		throw error;
-		// 	});
+		return this.onAuthStateChangedPromise()
+			.then((user) => {
+				return this.getUserById(user.uid);
+			})
+			.catch((error) => {
+				throw error;
+			});
 	}
 
 	onAuthStateChangedPromise() {
-		// return new Promise(function(resolve, reject) {
-		// 	firebase.auth().onAuthStateChanged(function(user) {
-		// 		if (user) {
-		// 			resolve(user);
-		// 		} else {
-		// 			reject(new Error('user not logged in'));
-		// 		}
-		// 	});
-		// });
+		return new Promise(function(resolve, reject) {
+			auth().onAuthStateChanged(function(user) {
+			// firebase.auth().onAuthStateChanged(function(user) {
+			// onAuthStateChanged(function(user) {
+				if (user) {
+                    console.log("\x1b[33m ~ file: Firebase.js ~ line 70 ~ //onAuthStateChanged ~ user", user)
+					resolve(user);
+				} else {
+					reject(new Error('user not logged in'));
+				}
+			});
+		});
 	}
 
 	// Registration
@@ -72,8 +84,7 @@ class Firebase {
 	registerNewHermonManUser(newHermonManUser) {
 		console.log('2. registerNewHermonManUser newHermonManUser', newHermonManUser);
 		const {email, password} = newHermonManUser;
-		return this._firebaseApp
-			.auth()
+		return auth()
 			.createUserWithEmailAndPassword(email, password)
 			.then((firebaseUser) => {
 				return localStorage.setCurrentUserMail(email).then(() => {
@@ -86,11 +97,11 @@ class Firebase {
 			})
 			.catch((error) => {
 				console.log(
-					'2. error in this._firebaseApp.auth().createUserWithEmailAndPassword registerNewHermonManUser, with hermonmanUser:',
+					'2. error in auth().createUserWithEmailAndPassword registerNewHermonManUser, with hermonmanUser:',
 					newHermonManUser
 				);
 				console.log(
-					'3. error in this._firebaseApp.auth().createUserWithEmailAndPassword registerNewHermonManUser',
+					'3. error in auth().createUserWithEmailAndPassword registerNewHermonManUser',
 					error
 				);
 				throw error;
@@ -108,8 +119,7 @@ class Firebase {
 			[WRITE_US.READ]: read,
 		};
 
-		let newMessageRef = this._firebaseApp
-			.database()
+		let newMessageRef = database()
 			.ref(WRITE_US.REF)
 			.push();
 		return newMessageRef
@@ -172,8 +182,7 @@ class Firebase {
 		console.log('write newUser to database:', newUser);
 
 		// init the ref and write to the DB
-		let newUserRef = this._firebaseApp
-			.database()
+		let newUserRef = database()
 			.ref(USER.REF)
 			.child(id);
 		return newUserRef
@@ -205,30 +214,32 @@ class Firebase {
 				return resolve(null);
 			});
 		}
-		return this._firebaseApp
-			.auth()
-			.signInWithEmailAndPassword(email, password)
-			.then((firebaseUser) => {
-				return localStorage.setCurrentUserMail(email).then(() => {
-					return firebaseUser;
-				});
-			})
-			.then((firebaseUser) => {
-				console.log('firebaseuser !!!!!!:   ', firebaseUser);
-				const userId = firebaseUser.uid || firebaseUser.user.uid;
-				console.log('firebaseuser USER ID!!!!!!:   ', userId);
-				return this.getUserById(userId);
-			})
-			.catch((error) => {
-				console.log('error in this._firebaseApp.auth().signInWithEmailAndPassword', error);
-				throw error;
-			});
+		return auth().signInWithEmailAndPassword(email, password).then(()=>{console.log('signInWithEmailAndPassword success')
+		localStorage.setCurrentUserMail(email).then(() => {
+					
+				});})
+			// .then((firebaseUser) => { 
+            //     console.log("\x1b[33m ~ file: Firebase.js ~ line 221 ~ .then ~ firebaseUser", firebaseUser)
+			// 	return localStorage.setCurrentUserMail(email).then(() => {
+			// 		return firebaseUser;
+			// 	});
+			// })
+			// .then((firebaseUser) => {
+			// 	console.log('firebaseuser !!!!!!:   ', firebaseUser);
+			// 	const userId = firebaseUser.uid || firebaseUser.user.uid;
+			// 	console.log('firebaseuser USER ID!!!!!!:   ', userId);
+			// 	return this.getUserById(userId);
+			// })
+			// .catch((error) => {
+            //     console.log("\x1b[33m ~ file: Firebase.js ~ line 232 ~ signInHermonManUser ~ error error in auth().signInWithEmailAndPassword", error)
+			// 	throw error;
+			// });
 	}
 
 	// Purchase and update user
 
 	updateHermonManUserStatus(user, status) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}`);
 		return newUserRef
 			.update({status: status})
 			.then((res) => {
@@ -242,7 +253,7 @@ class Firebase {
 	}
 
 	updateUserExpirationRegistrationDate(user, expireDate, registerDate) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}`);
 		return newUserRef
 			.update({expireDate, registerDate})
 			.then((res) => {
@@ -256,7 +267,7 @@ class Firebase {
 	}
 
 	updateHermonManUserLanguage(user, language) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}`);
 		return newUserRef
 			.update({language: language})
 			.then((res) => {
@@ -270,7 +281,7 @@ class Firebase {
 	}
 
 	updateHermonManUserWeight(user, weight) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}/data/weight`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}/data/weight`);
 		return newUserRef
 			.push(weight)
 			.then((res) => {
@@ -284,7 +295,7 @@ class Firebase {
 	}
 
 	updateHermonManUserHeight(user, height) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}`);
 		console.log('update height: ', user, height);
 		const {data} = user;
 		return newUserRef
@@ -300,7 +311,7 @@ class Firebase {
 	}
 
 	updateHermonManUserDiet(user, diet) {
-		let newUserRef = this._firebaseApp.database().ref(`${USER.REF}/${user._id}/diets`);
+		let newUserRef = database().ref(`${USER.REF}/${user._id}/diets`);
 		console.log('0. dietPressed updateHermonManUserDiet diet', diet);
 		return newUserRef
 			.push(diet)
@@ -318,37 +329,40 @@ class Firebase {
 			});
 	}
 
-	getUserById(userId) {
-		let userRef = this._firebaseApp
-			.database()
-			.ref(USER.REF)
-			.child(userId);
+	 getUserById(userId) {
+		// let userRef = database()
+		// 	.ref(USER.REF)
+		// 	.child(userId);
 
-		console.log('USER REF:  ', userRef);
-		return userRef
-			.once('value')
-			.then((snapshot) => {
-				if (snapshot.exists()) {
-					let userVal = snapshot.val();
-					userVal[USER.ID] = userId;
-					return userVal;
-				} else {
-					const error = new Error('user not found');
-					error.userNotFound = true;
-					throw error;
-				}
-			})
-			.catch((error) => {
-				console.log('failed to get user from ref', userRef.toString(), error);
-				throw error;
+			 database().ref(`${USER.REF}/${userId}`).on('value', snapshot => {
+				const userRef = snapshot.val()
+				console.log("\x1b[33m ~ file: Firebase.js ~ line 346 ~ database ~ userRef", userRef)
+				return userRef
 			});
+		// console.log('USER REF:  ', userRef);
+		// return userRef
+		// 	.once('value')
+		// 	.then((snapshot) => {
+		// 		if (snapshot.exists()) {
+		// 			let userVal = snapshot.val();
+		// 			userVal[USER.ID] = userId;
+		// 			return userVal;
+		// 		} else {
+		// 			const error = new Error('user not found');
+		// 			error.userNotFound = true;
+		// 			throw error;
+		// 		}
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log('failed to get user from ref', userRef.toString(), error);
+		// 		throw error;
+		// 	});
 	}
 
 	// Forgot Password
 
 	sendPasswordResetEmail(email) {
-		return this._firebaseApp
-			.auth()
+		return auth()
 			.sendPasswordResetEmail(email)
 			.catch((error) => {
 				console.log('error in sendPasswordResetEmail', error);
@@ -356,12 +370,11 @@ class Firebase {
 	}
 
 	logoutFromFirebase() {
-		return this._firebaseApp.auth().signOut();
+		return auth().signOut();
 	}
 
 	getWeightHistory(user) {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(`${USER.REF}/${user._id}/data/weight`)
 			.once('value')
 			.then((snapshot) => {
@@ -384,8 +397,7 @@ class Firebase {
 	}
 
 	getHistoryDiets(user) {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(`${USER.REF}/${user._id}/diets`)
 			.once('value')
 			.then((snapshot) => {
@@ -406,8 +418,7 @@ class Firebase {
 
 	//can insert only one time in day
 	insertAlreadyWeightOnDay(user, date) {
-		let weightRef = this._firebaseApp
-			.database()
+		let weightRef = database()
 			.ref(`${USER.REF}/${user._id}/data/weight`)
 			.orderByChild('date')
 			.equalTo(date);
@@ -431,8 +442,7 @@ class Firebase {
 	}
 
 	getLastDiet(user) {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(`${USER.REF}/${user._id}/diets`)
 			.once('value')
 			.then((snapshot) => {
@@ -452,8 +462,7 @@ class Firebase {
 	}
 
 	getNeutralAndOtherDiets() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(STATIC_DIETS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -475,8 +484,7 @@ class Firebase {
 	}
 
 	getStaticDiets() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(STATIC_DIETS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -525,8 +533,7 @@ class Firebase {
 	}
 
 	getRelevantDiets(method) {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(STATIC_DIETS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -546,18 +553,20 @@ class Firebase {
 			});
 	}
 
-	getStartMethods() {
-		return this._firebaseApp
-			.database()
+	async getStartMethods() {
+		console.log("\x1b[33m ~ file: Firebase.js ~ line 557 ~ getStartMethods ~ getStartMethods")
+		return await database()
 			.ref(START_METHODS.REF)
 			.once('value')
 			.then((snapshot) => {
 				const startMethods = [];
-				console.log('snapshotval is ', snapshot);
+				console.log("\x1b[33m ~ file: Firebase.js ~ line 563 ~ .then ~ snapshot", snapshot)
 				snapshot.forEach((child) => {
 					const t = child.val();
 					startMethods.push(t);
 				});
+
+                console.log("\x1b[33m ~ file: Firebase.js ~ line 571 ~ .then ~ startMethods", startMethods)
 
 				return startMethods;
 			})
@@ -568,8 +577,7 @@ class Firebase {
 	}
 
 	getFreeStaticDiets() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(FREE_STATIC_DIETS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -589,8 +597,7 @@ class Firebase {
 	}
 
 	getStartMethodsMaintain() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(START_METHODS_MAINTAIN.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -609,8 +616,7 @@ class Firebase {
 	}
 
 	getFoodTypes() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(FOOD_TYPES.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -630,8 +636,7 @@ class Firebase {
 	}
 
 	getFoodTypesHermon() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(FOOD_TYPE_HERMON.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -651,8 +656,7 @@ class Firebase {
 	}
 
 	getAllProducts() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(PRODUCTS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -671,8 +675,7 @@ class Firebase {
 	}
 
 	getSubscriptionPrices() {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(SUBSCRIPTIONS.REF)
 			.once('value')
 			.then((snapshot) => {
@@ -729,8 +732,7 @@ class Firebase {
 			[PAYMENT.PAYMENT_OPTION]: 'Credit Card',
 		};
 
-		let newPaymentRef = this._firebaseApp
-			.database()
+		let newPaymentRef = database()
 			.ref(PAYMENT.REF)
 			.push();
 		return newPaymentRef
@@ -763,8 +765,7 @@ class Firebase {
 			[ORDER.READ]: false,
 		};
 
-		let newOrderRef = this._firebaseApp
-			.database()
+		let newOrderRef = database()
 			.ref(ORDER.REF)
 			.push();
 		return newOrderRef
@@ -788,8 +789,7 @@ class Firebase {
 	}
 
 	checkPurchaseEnabled = () => {
-		return this._firebaseApp
-			.database()
+		return database()
 			.ref(PURCHASE_ENABLED.REF)
 			.once('value')
 			.then((snapshot) => {

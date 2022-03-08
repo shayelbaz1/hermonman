@@ -84,7 +84,7 @@ export default class SideMenu extends Component {
 			})
 
 			.catch((error) => {
-				console.log('user not logged in to firebase', error);
+                console.log("\x1b[33m ~ file: StartMethodsDrawer.js ~ line 88 ~ error user not logged in to firebase", error)
 				sceneManager.goToLogin();
 			});
 	};

@@ -1,9 +1,9 @@
 // Libraries Import //
 
-import React, {Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import {Drawer, Lightbox, Modal, Overlay, Router, Scene, Stack} from 'react-native-router-flux';
-import {APP_TEXT_COLOR} from './assets/colors';
+import React, { Component, useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Keyboard } from 'react-native';
+import { Drawer, Lightbox, Modal, Overlay, Router, Scene, Stack } from 'react-native-router-flux';
+import { APP_TEXT_COLOR } from './assets/colors';
 import History from './components/startMethodsDrawer/History';
 import MenuIcon from './components/startMethodsDrawer/MenuIcon';
 import Profile from './components/startMethodsDrawer/Profile';
@@ -22,7 +22,7 @@ import HermonHeader from './scenes/hermonHeader/HermonHeader';
 import Home from './scenes/homeScreens/Home';
 import ForgotPassword from './scenes/login/ForgotPassword';
 import Login from './scenes/login/Login';
-import Registration from './scenes/login/Registration';
+import RegisterScreen from './scenes/login/Registration';
 import RedirectByUserStatus from './scenes/login/Splash';
 import Progress from './scenes/progress/Progress';
 import Purchase from './scenes/purchase/Purchase';
@@ -32,114 +32,287 @@ import DietsRenderer from './scenes/startMethods/commonScreens/DietsRenderer';
 import InsertWeight from './scenes/startMethods/commonScreens/InsertWeight';
 import ChooseFoodType from './scenes/startMethods/hermonManMethod/ChooseFoodType';
 import Payment from './scenes/purchase/Payment';
-import {initLocale, strings} from './utils/lang/I18n';
+import { initLocale, strings } from './utils/lang/I18n';
 import localized from './utils/lang/localized';
 import Products from './scenes/products/Products';
 import Regulations from './scenes/purchase/Regulations';
+import { NativeBaseProvider } from 'native-base';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer,useNavigation } from '@react-navigation/native';
+import auth from'@react-native-firebase/auth'
+import database from '@react-native-firebase/database'
+import localStorage from './utils/localStorage/localStorage';
+import firebase from './utils/firebase/Firebase';
+import moment from 'moment';
+import sceneManager from './scenes/sceneManager';
+import Routes from './Routes/Routes';
 // Components Import //
 
 // Drawers Import //
 
 // Dialogs Import //
+const App = () =>{
+	const [loading, setLoading] = React.useState(true)
+	const Stack = createNativeStackNavigator();
+	const StackHome = createNativeStackNavigator();
+	const screenOptions = { headerShown: false }
+	// const [initializing, setInitializing] = useState(true);
+	// const [user, setUser] = useState();
+	// const navigation = useNavigation()
+    // console.log("\x1b[33m ~ file: App.js ~ line 62 ~ App ~ navigation", navigation)
 
-export default class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			loading: true,
+	// convertDateStringToDate = (dateString) => {
+	// 	const parts = dateString.split('/');
+	// 	const convertStringToDate = moment([parts[2], parts[1] - 1, parts[0]]);
+
+	// 	return convertStringToDate;
+	// };
+	// // Handle user state changes
+	// function onAuthStateChanged(user) {
+    //     console.log("\x1b[33m ~ file: App.js ~ line 57 ~ onAuthStateChanged ~ user", user)
+	// 	setUser(user);
+	// 	localStorage.setCurrentUserMail(email).then(() => {
+	// 				return firebaseUser;
+	// 			});
+	// 		const userId = firebaseUser.uid || firebaseUser.user.uid;
+	// 		console.log('firebaseuser USER ID!!!!!!:   ', userId);
+	// 		const currentUser= firebase.getUserById(userId);
+		
+	// 				const {expireDate} = currentUser;
+	// 				const expireDateConverted = expireDate ? this.convertDateStringToDate(expireDate) : undefined;
+	// 				const today = moment(new Date());
+	// 				console.log('signed in with firebase.signInHermonManUser, going to home screen', currentUser);
+	// 				Keyboard.dismiss();
+	// 				if (currentUser.status === '0' || expireDateConverted.isBefore(today)) {
+	// 					sceneManager.goToPurchase(currentUser);
+	// 				} else if (currentUser.status === '1') {
+	// 					// sceneManager.goToHome(currentUser);
+    //                     console.log("\x1b[33m ~ file: Login.js ~ line 107 ~ .then ~ Home")
+	// 					navigation.navigate('Home',{currentUser})
+	// 				} else {
+	// 					sceneManager.goToProgress(currentUser);
+	// 				}
+
+	
+	// 	if (initializing) setInitializing(false);
+	// }
+
+	// React.useEffect(() => {
+	// 	const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+	// 	console.log('database:', database())
+	// 	database().ref('/users/aMEdcP536oMoBLTuVmHACFTvuf52').on('value', snapshot => {
+    //             console.log("\x1b[33m ~ file: App.js ~ line 70 ~ React.useEffect ~ snapshot.val() ~ User data:", snapshot.val())
+	// 		});
+
+	// 	// return subscriber; // unsubscribe on unmount
+	//   }, []);
+	
+	const sceneProps = () => {
+		let header = this.renderHermonImage();
+
+		return {
+			header,
 		};
+	};
 
-		//disable text scaling
-		Text.defaultProps = Text.defaultProps || {};
-		Text.defaultProps.allowFontScaling = false;
-	}
-
-	componentWillMount() {
-		initLocale().then(() => {
-			this.setState({loading: false});
-		});
-	}
-
-	renderHermonImage = () => {
+	const renderHermonImage = () => {
 		return (
-			<View style={{alignSelf: 'center'}}>
+			<View style={{ alignSelf: 'center' }}>
 				<HermonHeader />
 			</View>
 		);
 	};
-
-	sceneProps = () => {
-		let renderTitle = this.renderHermonImage();
-
-		return {
-			renderTitle,
-		};
-	};
-
-	renderSplah() {
-		return <RedirectByUserStatus />;
-	}
-
-	renderRouter() {
+	
+	function renderLogin(){
 		const hermonmanTitle = strings('HERMONMAN_TITLE');
 		return (
-			<Router key='router'>
-				<Overlay key='overlay'>
-					<Modal hideNavBar key='modal'>
-						<Lightbox key='lightbox'>
-							<Stack key='root' navigationBarStyle={{backgroundColor: 'white'}}>
-								<Scene key='RedirectByUserStatus' component={RedirectByUserStatus} hideNavBar />
-								<Scene key='Login' component={Login} hideNavBar />
-								<Scene key='Registration' component={Registration} {...this.sceneProps()} />
-								<Scene key='ForgotPassword' component={ForgotPassword} />
-								<Drawer
-									key='StartMethodsDrawer'
-									title={localized.home.title}
-									drawerPosition='right'
-									drawerWidth={250}
-									contentComponent={StartMethodsDrawer}
-									drawerIcon={<MenuIcon />}
-									hideNavBar>
-									<Scene key='Home' component={Home} {...this.sceneProps()} />
-									<Scene key='CalorieMethod' component={CalorieMethod} />
-									<Scene key='Purchase' component={Purchase} {...this.sceneProps()} />
-									<Scene key='Profile' component={Profile} {...this.sceneProps()} />
-									<Scene key='Statistics' component={Statistics} {...this.sceneProps()} />
-									<Scene key='History' component={History} {...this.sceneProps()} />
-									<Scene key='InsertWeight' component={InsertWeight} {...this.sceneProps()} />
-									<Scene key='DietsRenderer' component={DietsRenderer} {...this.sceneProps()} />
-									<Scene key='ChooseFoodType' component={ChooseFoodType} {...this.sceneProps()} />
-									<Scene key='FoodChoice' component={FoodChoice} {...this.sceneProps()} />
-									<Scene key='Progress' component={Progress} {...this.sceneProps()} />
-									<Scene key='Settings' component={Settings} {...this.sceneProps()} />
-									<Scene key='AppExplantion' component={AppExplantion} {...this.sceneProps()} />
-									<Scene key='TermsOfUse' component={TermsOfUser} {...this.sceneProps()} />
-									<Scene key='CaloriesDietRender' component={CaloriesDiet} {...this.sceneProps()} />
-									<Scene key='ContactUs' component={ContactUs} {...this.sceneProps()} />
-									<Scene key='WriteUs' component={WriteUs} {...this.sceneProps()} />
-									<Scene key='Payment' component={Payment} {...this.sceneProps()} />
-									<Scene key='Products' component={Products} {...this.sceneProps()} />
-									<Scene key='Regulations' component={Regulations} {...this.sceneProps()} />
-								</Drawer>
-								<Scene key='Terms' component={TermsDialog} />
-								<Scene key='HermonManDialog' component={HermonManDialog} />
-								<Scene key='InsertWeightDialog' component={InsertWeightDialog} />
-							</Stack>
-						</Lightbox>
-					</Modal>
-				</Overlay>
-			</Router>
+				<NativeBaseProvider>
+					<NavigationContainer>
+						<Stack.Navigator
+							// initialRouteName="Login"
+							screenOptions={screenOptions}
+						>
+							<Stack.Screen name='Login' component={Login} />
+							{/* <Stack.Screen name='RedirectByUserStatus' component={RedirectByUserStatus} /> */}
+							<Stack.Screen name='RegisterScreen' component={RegisterScreen} option={{ ...sceneProps }} />
+							<Stack.Screen name='ForgotPassword' component={ForgotPassword} />
+							{/* <Stack.Screen name='Terms' component={TermsDialog} /> */}
+							{/* <Stack.Screen name='HermonManDialog' component={HermonManDialog} /> */}
+							{/* <Stack.Screen name='InsertWeightDialog' component={InsertWeightDialog} /> */}
+							<Stack.Screen name='Home' component={Home} option={{...sceneProps}} />
+
+						</Stack.Navigator>
+					</NavigationContainer>
+				</NativeBaseProvider>
+		);
+	}
+	function renderApp(){
+		const hermonmanTitle = strings('HERMONMAN_TITLE');
+		return (
+				<NativeBaseProvider>
+					<NavigationContainer>
+						<StackHome.Navigator
+							initialRouteName="Home"
+							screenOptions={screenOptions}
+						>
+							<StackHome.Screen name='Home' component={Home} option={{...sceneProps}} />
+						</StackHome.Navigator>
+					</NavigationContainer>
+				</NativeBaseProvider>
 		);
 	}
 
-	render() {
-		if (this.state.loading) {
-			return this.renderSplah();
-		}
+	// if (initializing) return null;
+    // console.log("\x1b[33m ~ file: App.js ~ line 125 ~ App ~ user!", user)
+	// if(!user){
+	// 	return (
+	// 		renderLogin()
+	// 	)
+	// }
+	// return(
+		// renderApp()
+		
 
-		return this.renderRouter();
-	}
+	// )
+	return (
+		<NativeBaseProvider>
+			<NavigationContainer>
+				<Routes/>
+			</NavigationContainer>
+		</NativeBaseProvider>
+	)
 }
+
+export default App 
+
+// export default class App extends Component {
+// 	constructor(props) {
+// 		super(props);
+// 		this.state = {
+// 			loading: true,
+// 		};
+
+// 		//disable text scaling
+// 		Text.defaultProps = Text.defaultProps || {};
+// 		Text.defaultProps.allowFontScaling = false;
+// 		this.user = auth().currentUser
+//         console.log("\x1b[33m ~ file: App.js ~ line 60 ~ constructor ~ this.user", this.user)
+// 	}
+
+// 	componentWillMount() {
+// 		auth().log((user)=>{
+//         console.log("\x1b[33m ~ file: App.js ~ line 65 ~ subscriber ~ user", user)
+// 		})
+// 		initLocale().then(() => {
+// 			this.setState({ loading: false });
+// 		});
+// 	}
+
+	// renderHermonImage = () => {
+	// 	return (
+	// 		<View style={{ alignSelf: 'center' }}>
+	// 			<HermonHeader />
+	// 		</View>
+	// 	);
+	// };
+
+// 	sceneProps = () => {
+// 		let header = this.renderHermonImage();
+
+// 		return {
+// 			header,
+// 		};
+// 	};
+
+// 	renderSplah() {
+// 		return <RedirectByUserStatus />;
+// 	}
+// 	Stack = createNativeStackNavigator();
+// 	screenOptions = { headerShown: false }
+
+// 	renderRouter() {
+// 		const hermonmanTitle = strings('HERMONMAN_TITLE');
+// 		return (
+// 			<>
+// 				<NativeBaseProvider>
+// 					<NavigationContainer>
+// 						<this.Stack.Navigator
+// 							// initialRouteName="Login"
+// 							screenOptions={this.screenOptions}
+// 						>
+// 							<this.Stack.Screen name='Login' component={Login} />
+// 							<this.Stack.Screen name='RedirectByUserStatus' component={RedirectByUserStatus} />
+// 							<this.Stack.Screen name='RegisterScreen' component={RegisterScreen} option={{ ...this.sceneProps }} />
+// 							<this.Stack.Screen name='ForgotPassword' component={ForgotPassword} />
+// 							<this.Stack.Screen name='Terms' component={TermsDialog} />
+// 							<this.Stack.Screen name='HermonManDialog' component={HermonManDialog} />
+// 							<this.Stack.Screen name='InsertWeightDialog' component={InsertWeightDialog} />
+// 							<this.Stack.Screen name='Home' component={Home} option={{...this.sceneProps()}} />
+
+// 						</this.Stack.Navigator>
+// 					</NavigationContainer>
+// 				</NativeBaseProvider>
+
+// 			{/* <NativeBaseProvider>
+// 				<Router key='router'>
+// 					<Overlay key='overlay'>
+// 						<Modal hideNavBar key='modal'>
+// 							<Lightbox key='lightbox'>
+// 								<Stack key='root' navigationBarStyle={{ backgroundColor: 'white' }}>
+// 									<Scene key='RedirectByUserStatus' component={RedirectByUserStatus} hideNavBar />
+// 									<Scene key='Login' component={Login} hideNavBar />
+// 									<Scene key='RegisterScreen' component={RegisterScreen} {...this.sceneProps()} />
+// 									<Scene key='ForgotPassword' component={ForgotPassword} />
+// 									<Drawer
+// 										key='StartMethodsDrawer'
+// 										title={localized.home.title}
+// 										drawerPosition='right'
+// 										drawerWidth={250}
+// 										contentComponent={StartMethodsDrawer}
+// 										drawerIcon={<MenuIcon />}
+// 										hideNavBar>
+// 										<Scene key='Home' component={Home} {...this.sceneProps()} />
+// 										<Scene key='CalorieMethod' component={CalorieMethod} />
+// 										<Scene key='Purchase' component={Purchase} {...this.sceneProps()} />
+// 										<Scene key='Profile' component={Profile} {...this.sceneProps()} />
+// 										<Scene key='Statistics' component={Statistics} {...this.sceneProps()} />
+// 										<Scene key='History' component={History} {...this.sceneProps()} />
+// 										<Scene key='InsertWeight' component={InsertWeight} {...this.sceneProps()} />
+// 										<Scene key='DietsRenderer' component={DietsRenderer} {...this.sceneProps()} />
+// 										<Scene key='ChooseFoodType' component={ChooseFoodType} {...this.sceneProps()} />
+// 										<Scene key='FoodChoice' component={FoodChoice} {...this.sceneProps()} />
+// 										<Scene key='Progress' component={Progress} {...this.sceneProps()} />
+// 										<Scene key='Settings' component={Settings} {...this.sceneProps()} />
+// 										<Scene key='AppExplantion' component={AppExplantion} {...this.sceneProps()} />
+// 										<Scene key='TermsOfUse' component={TermsOfUser} {...this.sceneProps()} />
+// 										<Scene key='CaloriesDietRender' component={CaloriesDiet} {...this.sceneProps()} />
+// 										<Scene key='ContactUs' component={ContactUs} {...this.sceneProps()} />
+// 										<Scene key='WriteUs' component={WriteUs} {...this.sceneProps()} />
+// 										<Scene key='Payment' component={Payment} {...this.sceneProps()} />
+// 										<Scene key='Products' component={Products} {...this.sceneProps()} />
+// 										<Scene key='Regulations' component={Regulations} {...this.sceneProps()} />
+// 									</Drawer>
+// 									<Scene key='Terms' component={TermsDialog} />
+// 									<Scene key='HermonManDialog' component={HermonManDialog} />
+// 									<Scene key='InsertWeightDialog' component={InsertWeightDialog} />
+// 								</Stack>
+// 							</Lightbox>
+// 						</Modal>
+// 					</Overlay>
+// 				</Router>
+// 			</NativeBaseProvider> */}
+// 			</>
+// 		);
+// 	}
+
+// 	render() {
+// 		if (this.state.loading) {
+// 			return this.renderSplah();
+// 		}
+
+// 		return this.renderRouter();
+// 	}
+// }
 
 const styles = StyleSheet.create({
 	logoStyle: {

@@ -16,7 +16,7 @@ export default class ForgotPassword extends Component {
     constructor() {
         super();
         this.state = {
-            email: '',
+            email: 'sguides28@gmail.com',
             emailError:''
         };
     }
@@ -60,7 +60,8 @@ export default class ForgotPassword extends Component {
 
                     <View style={{marginTop:20,marginHorizontal:16}}>
                         <HermonManTextInput onChangeText={text => this.setState({email: text,emailError:''})}
-                                            placeholder={localized.forgotPassword.emailPlaceHolder}/>
+                                            placeholder={localized.forgotPassword.emailPlaceHolder}
+                                            textValue="sguides28@gmail.com"/>
                        {this.renderMailError()}
                     </View>
 
@@ -86,9 +87,11 @@ export default class ForgotPassword extends Component {
 
         if(emailValidation) {
             firebase.sendPasswordResetEmail(email)
-                .then(() => {
+                .then((res) => {
+                    console.log("\x1b[33m ~ file: ForgotPassword.js ~ line 90 ~ .then ~ res", res)
                     Alert.alert(localized.Alerts.forgotPasswordAlertTitle, forgotPasswordSentMessage);
-                    return sceneManager.goToLogin();
+                    // return sceneManager.goToLogin();
+                    this.props.navigation.navigate('Login')
                 })
                 .catch(error => {
                     console.log('error in sending reset email', error);

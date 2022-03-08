@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "69955617973",
+    "firebase_url": "https://hermonman-29eea.firebaseio.com",
+    "project_id": "hermonman-29eea",
+    "storage_bucket": "hermonman-29eea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69955617973:android:93946d573546790a",
+        "android_client_info": {
+          "package_name": "com.hermonman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69955617973-18e26jd0srhnr0dd2ap2lkgg1419gi2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-VlW-PuGX_-Q-PbkCe00QGkMAqZO7AlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69955617973-18e26jd0srhnr0dd2ap2lkgg1419gi2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
